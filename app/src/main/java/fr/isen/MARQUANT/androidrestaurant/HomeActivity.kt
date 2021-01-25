@@ -1,9 +1,11 @@
 package fr.isen.MARQUANT.androidrestaurant
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import fr.isen.MARQUANT.androidrestaurant.databinding.ActivityHomeBinding
+import java.util.*
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -11,8 +13,27 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.buttonEntrees.setOnClickListener {
-           // Toast.makeText(this, getString(R.string.toast_content), Toast.LENGTH_LONG).show()
+
+        binding.entrees.setOnClickListener {
+            statCategoryActivity(ItemType.ENTREES)
         }
+
+        binding.plats.setOnClickListener {
+            statCategoryActivity(ItemType.PLATS)
+        }
+
+        binding.deserts.setOnClickListener {
+            statCategoryActivity(ItemType.DESSERTS)
+        }
+    }
+
+    private fun statCategoryActivity(item: ItemType) {
+        val intent = Intent(this, CategoryActivity::class.java)
+        intent.putExtra(CATEGORY_NAME, item)
+        startActivity(intent)
+    }
+
+    companion object {
+        const val CATEGORY_NAME = "CATEGORY_NAME"
     }
 }

@@ -1,8 +1,11 @@
 <resources>
-    <string name="app_name">DroidRestaurant</string>
-    <string name="name_restaurant">DroidRestaurant</string>
+    <string name="app_name">MIAM</string>
     <string name="acceuil">Bienvenue chez</string>
-    <string name="button_entrees">Entrées</string>
-    <string name="button_plats">Plats</string>
-    <string name="button_deserts">Déserts</string>
+    <string name="name_restaurant">MIAM</string>
+
+    <string name="entrees">Entrées</string>
+    <string name="plats">Plats</string>
+    <string name="desserts">Déserts</string>
+
+    <string name="toast_content">Contenu du toast</string>
 </resources>
