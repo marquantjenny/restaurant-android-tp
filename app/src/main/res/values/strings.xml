@@ -2,4 +2,7 @@
     <string name="app_name">DroidRestaurant</string>
     <string name="name_restaurant">DroidRestaurant</string>
     <string name="acceuil">Bienvenue chez</string>
+    <string name="button_entrees">Entrées</string>
+    <string name="button_plats">Plats</string>
+    <string name="button_deserts">Déserts</string>
 </resources>
