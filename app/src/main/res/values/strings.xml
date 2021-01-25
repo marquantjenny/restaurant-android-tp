@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DroidRestaurant</string>
+    <string name="name_restaurant">DroidRestaurant</string>
+    <string name="acceuil">Bienvenue chez</string>
+</resources>
