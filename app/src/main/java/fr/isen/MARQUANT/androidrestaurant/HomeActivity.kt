@@ -3,9 +3,9 @@ package fr.isen.MARQUANT.androidrestaurant
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import fr.isen.MARQUANT.androidrestaurant.category.CategoryActivity
+import fr.isen.MARQUANT.androidrestaurant.category.ItemType
 import fr.isen.MARQUANT.androidrestaurant.databinding.ActivityHomeBinding
-import java.util.*
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -36,4 +36,5 @@ class HomeActivity : AppCompatActivity() {
     companion object {
         const val CATEGORY_NAME = "CATEGORY_NAME"
     }
+
 }
