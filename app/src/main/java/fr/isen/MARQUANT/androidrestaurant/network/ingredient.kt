@@ -1,11 +1,5 @@
 package fr.isen.MARQUANT.androidrestaurant.network
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
+import com.google.gson.annotations.SerializedName
 
-class ingredient : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ingredient)
-    }
-}
+class Ingredient(@SerializedName("name_fr") val name:String){}

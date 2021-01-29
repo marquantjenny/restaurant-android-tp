@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fond3"
+    android:fadeScrollbars="false"
     tools:context=".HomeActivity">
 
     <TextView
@@ -45,7 +47,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:backgroundTint="@color/orange"
         android:text="@string/entrees"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -60,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:backgroundTint="@color/orange"
+        android:background="@drawable/plat"
         android:text="@string/plats"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

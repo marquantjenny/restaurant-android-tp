@@ -14,12 +14,24 @@ import fr.isen.MARQUANT.androidrestaurant.CategoryAdapter
 import fr.isen.MARQUANT.androidrestaurant.HomeActivity
 import fr.isen.MARQUANT.androidrestaurant.R
 import fr.isen.MARQUANT.androidrestaurant.databinding.ActivityCategoryBinding
+import fr.isen.MARQUANT.androidrestaurant.network.Dish
 import fr.isen.MARQUANT.androidrestaurant.network.MenuResult
 import fr.isen.MARQUANT.androidrestaurant.network.NetworkConstant
 import org.json.JSONObject
 
 enum class ItemType {
-    ENTREES, PLATS, DESSERTS
+    ENTREES, PLATS, DESSERTS;
+
+    companion object {
+        fun categoryTitle(item: ItemType?) : String {
+            return when(item) {
+                ENTREES -> "Entrées"
+                PLATS -> "Plats"
+                DESSERTS -> "Desserts"
+                else -> ""
+            }
+        }
+    }
 }
 
 class CategoryActivity : AppCompatActivity() {
@@ -34,24 +46,16 @@ class CategoryActivity : AppCompatActivity() {
         binding.categoryTitle.text = getCategoryTitle(selectedItem)
         //loadList()
 
-        makeRequest()
-
+        makeRequest(selectedItem)
         Log.d( "lifecycle", "onCreate")
     }
 
-    private fun loadList(){
-        val entries= listOf<String>("title1","title2","title3")
-        val adapter = CategoryAdapter(entries)
-        binding.recycleView.layoutManager = LinearLayoutManager(this)
-        binding.recycleView.adapter = adapter
-    }
-
-    private fun makeRequest(){
+    private fun makeRequest(selectedItem: ItemType?){
         val queue = Volley.newRequestQueue(this)
         val url = NetworkConstant.BASE_URL + NetworkConstant.PATH_MENU
 
         val jsonData = JSONObject()
-        jsonData.put(NetworkConstant.ID_SHOP, 1)
+        jsonData.put(NetworkConstant.ID_SHOP, "1")
 
         val request = JsonObjectRequest(
             Request.Method.POST,
@@ -59,9 +63,8 @@ class CategoryActivity : AppCompatActivity() {
             jsonData,
             {response ->
                 val menu = GsonBuilder().create().fromJson(response.toString(), MenuResult::class.java)
-                menu.data.forEach {
-                    Log.d("request", it.name)
-                }
+                val items = menu.data.firstOrNull { it.name == ItemType.categoryTitle(selectedItem) }
+                loadList(items?.items)
             },
             { error ->
                 error.message?.let{
@@ -71,9 +74,6 @@ class CategoryActivity : AppCompatActivity() {
                 }
             }
         )
-
-
-
         /*
         val request = StringRequest(Request.Method.GET,
             url,
@@ -86,6 +86,16 @@ class CategoryActivity : AppCompatActivity() {
         )
         */
         queue.add(request)
+    }
+
+    private fun loadList(dishes: List<Dish>?){
+        dishes?.let {
+            val adapter = CategoryAdapter(it) { dish ->
+                Log.d("dish", "selected dish ${dish.name}")
+            }
+            binding.recycleView.layoutManager = LinearLayoutManager(this)
+            binding.recycleView.adapter = adapter
+        }
     }
 
     private fun getCategoryTitle(item: ItemType?): String {
