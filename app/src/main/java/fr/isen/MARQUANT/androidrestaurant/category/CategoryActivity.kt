@@ -1,5 +1,6 @@
 package fr.isen.MARQUANT.androidrestaurant.category
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -43,49 +44,77 @@ class CategoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val selectedItem = intent.getSerializableExtra(HomeActivity.CATEGORY_NAME) as? ItemType
+
+        binding.swipeLayout.setOnRefreshListener {
+            resetCache()
+            makeRequest(selectedItem)
+        }
+
         binding.categoryTitle.text = getCategoryTitle(selectedItem)
         //loadList()
 
+        loadList(listOf<Dish>())
         makeRequest(selectedItem)
         Log.d( "lifecycle", "onCreate")
     }
 
     private fun makeRequest(selectedItem: ItemType?){
-        val queue = Volley.newRequestQueue(this)
-        val url = NetworkConstant.BASE_URL + NetworkConstant.PATH_MENU
+        resultFromCache()?.let {
+            //la requete est en cache
+            parseResult(it,selectedItem)
+        } ?: run {
+            val queue = Volley.newRequestQueue(this)
+            val url = NetworkConstant.BASE_URL + NetworkConstant.PATH_MENU
 
-        val jsonData = JSONObject()
-        jsonData.put(NetworkConstant.ID_SHOP, "1")
+            val jsonData = JSONObject()
+            jsonData.put(NetworkConstant.ID_SHOP, "1")
 
-        val request = JsonObjectRequest(
-            Request.Method.POST,
-            url,
-            jsonData,
-            {response ->
-                val menu = GsonBuilder().create().fromJson(response.toString(), MenuResult::class.java)
-                val items = menu.data.firstOrNull { it.name == ItemType.categoryTitle(selectedItem) }
-                loadList(items?.items)
-            },
-            { error ->
-                error.message?.let{
-                    Log.d("request", it)
-                } ?: run {
-                    Log.d("request", error.toString())
-                }
-            }
-        )
-        /*
-        val request = StringRequest(Request.Method.GET,
-            url,
-            Response.Listener { response ->
-                Log.d("Request", response)
-            },
-            Response.ErrorListener { error ->
-                Log.d("Request", error.localizedMessage)
-            }
-        )
-        */
-        queue.add(request)
+            val request = JsonObjectRequest(
+                    Request.Method.POST,
+                    url,
+                    jsonData,
+                    {response ->
+                        binding.swipeLayout.isRefreshing = false
+                        cacheResult(response.toString())
+                        parseResult(response.toString(),selectedItem)
+
+                    },
+                    { error ->
+                        binding.swipeLayout.isRefreshing = false
+                        error.message?.let{
+                            Log.d("request", it)
+                        } ?: run {
+                            Log.d("request", error.toString())
+                        }
+                    }
+            )
+            queue.add(request)
+        }
+    }
+
+    private fun cacheResult(response: String){
+        val sharedPreferences = getSharedPreferences(USER_PREFERENCE_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(REQUEST_CACHE,response)
+        editor.apply()
+    }
+
+    private fun resetCache() {
+        val sharedPreferences = getSharedPreferences(USER_PREFERENCE_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove(REQUEST_CACHE)
+        editor.apply()
+    }
+
+    private fun resultFromCache(): String? {
+        val sharedPreferences = getSharedPreferences(USER_PREFERENCE_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(REQUEST_CACHE, null)
+    }
+
+    private fun parseResult(response: String, selectedItem: ItemType?){
+        val menu = GsonBuilder().create().fromJson(response.toString(), MenuResult::class.java)
+        val items = menu.data.firstOrNull { it.name == ItemType.categoryTitle(selectedItem) }
+        loadList(items?.items)
     }
 
     private fun loadList(dishes: List<Dish>?){
@@ -120,5 +149,9 @@ class CategoryActivity : AppCompatActivity() {
     override fun onDestroy() {
         Log.d( "lifecycle", "onDestroy")
         super.onDestroy()
+    }
+    companion object{
+        const val USER_PREFERENCE_NAME = "USER_PREFERENCE_NAME"
+        const val REQUEST_CACHE = "REQUEST_CACHE"
     }
 }

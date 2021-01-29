@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import fr.isen.MARQUANT.androidrestaurant.databinding.DishCellBinding
 import fr.isen.MARQUANT.androidrestaurant.network.Dish
 
@@ -20,6 +21,10 @@ class CategoryAdapter (private val titles: List<Dish>,
         fun bind(dish: Dish){
             titleView.text = dish.name
             priceView.text = "${dish.prices.first().price} €"
+            Picasso.get()
+                .load(dish.getThumbnaiURL())
+                .placeholder(R.drawable.zer)
+                .into(imageView)
         }
     }
 
