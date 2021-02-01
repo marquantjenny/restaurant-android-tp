@@ -1,17 +1,18 @@
 package fr.isen.MARQUANT.androidrestaurant.category
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.GsonBuilder
+import fr.isen.MARQUANT.androidrestaurant.BaseActivity
 import fr.isen.MARQUANT.androidrestaurant.CategoryAdapter
+import fr.isen.MARQUANT.androidrestaurant.detail.DetailActivity
 import fr.isen.MARQUANT.androidrestaurant.HomeActivity
 import fr.isen.MARQUANT.androidrestaurant.R
 import fr.isen.MARQUANT.androidrestaurant.databinding.ActivityCategoryBinding
@@ -35,23 +36,22 @@ enum class ItemType {
     }
 }
 
-class CategoryActivity : AppCompatActivity() {
-    private  lateinit var binding: ActivityCategoryBinding
+class CategoryActivity : BaseActivity() {
+    private  lateinit var bindind: ActivityCategoryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityCategoryBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        bindind = ActivityCategoryBinding.inflate(layoutInflater)
+        setContentView(bindind.root)
 
         val selectedItem = intent.getSerializableExtra(HomeActivity.CATEGORY_NAME) as? ItemType
 
-        binding.swipeLayout.setOnRefreshListener {
+        bindind.swipeLayout.setOnRefreshListener {
             resetCache()
             makeRequest(selectedItem)
         }
 
-        binding.categoryTitle.text = getCategoryTitle(selectedItem)
-        //loadList()
+        bindind.categoryTitle.text = getCategoryTitle(selectedItem)
 
         loadList(listOf<Dish>())
         makeRequest(selectedItem)
@@ -74,13 +74,13 @@ class CategoryActivity : AppCompatActivity() {
                     url,
                     jsonData,
                     {response ->
-                        binding.swipeLayout.isRefreshing = false
+                        bindind.swipeLayout.isRefreshing = false
                         cacheResult(response.toString())
                         parseResult(response.toString(),selectedItem)
 
                     },
                     { error ->
-                        binding.swipeLayout.isRefreshing = false
+                        bindind.swipeLayout.isRefreshing = false
                         error.message?.let{
                             Log.d("request", it)
                         } ?: run {
@@ -120,10 +120,12 @@ class CategoryActivity : AppCompatActivity() {
     private fun loadList(dishes: List<Dish>?){
         dishes?.let {
             val adapter = CategoryAdapter(it) { dish ->
-                Log.d("dish", "selected dish ${dish.name}")
+                val intent = Intent(this, DetailActivity:: class.java)
+                intent.putExtra(DetailActivity.DISH_EXTRA, dish)
+                startActivity(intent)
             }
-            binding.recycleView.layoutManager = LinearLayoutManager(this)
-            binding.recycleView.adapter = adapter
+            bindind.recycleView.layoutManager = LinearLayoutManager(this)
+            bindind.recycleView.adapter = adapter
         }
     }
 

@@ -7,7 +7,7 @@ import fr.isen.MARQUANT.androidrestaurant.category.CategoryActivity
 import fr.isen.MARQUANT.androidrestaurant.category.ItemType
 import fr.isen.MARQUANT.androidrestaurant.databinding.ActivityHomeBinding
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseActivity() {
     private lateinit var binding: ActivityHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

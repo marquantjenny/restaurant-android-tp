@@ -12,7 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
-        <activity android:name=".DetailActivity"></activity>
+        <activity android:name=".basket.BasketAdapter"></activity>
+        <activity android:name=".basket.BasketActivity" />
+        <activity android:name=".BaseActivity" />
+        <activity android:name=".basket.Basket" />
+        <activity android:name=".detail.PhotoAdapter" />
+        <activity android:name=".detail.DetailActivity" />
         <activity android:name=".network.Price" />
         <activity android:name=".network.ingredient" />
         <activity android:name=".network.Dish" />

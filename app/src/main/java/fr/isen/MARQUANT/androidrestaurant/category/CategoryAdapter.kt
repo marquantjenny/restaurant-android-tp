@@ -22,7 +22,7 @@ class CategoryAdapter (private val titles: List<Dish>,
             titleView.text = dish.name
             priceView.text = "${dish.prices.first().price} €"
             Picasso.get()
-                .load(dish.getThumbnaiURL())
+                .load(dish.getThumbnaiUrl())
                 .placeholder(R.drawable.zer)
                 .into(imageView)
         }
