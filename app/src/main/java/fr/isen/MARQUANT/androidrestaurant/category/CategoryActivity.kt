@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import fr.isen.MARQUANT.androidrestaurant.utils.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -63,6 +64,9 @@ class CategoryActivity : BaseActivity() {
             //la requete est en cache
             parseResult(it,selectedItem)
         } ?: run {
+            val loader = Loader()
+            loader.show(this, "récupération du menu")
+
             val queue = Volley.newRequestQueue(this)
             val url = NetworkConstant.BASE_URL + NetworkConstant.PATH_MENU
 
@@ -74,12 +78,14 @@ class CategoryActivity : BaseActivity() {
                     url,
                     jsonData,
                     {response ->
+                        loader.hide(this)
                         bindind.swipeLayout.isRefreshing = false
                         cacheResult(response.toString())
                         parseResult(response.toString(),selectedItem)
 
                     },
                     { error ->
+                        loader.hide(this)
                         bindind.swipeLayout.isRefreshing = false
                         error.message?.let{
                             Log.d("request", it)

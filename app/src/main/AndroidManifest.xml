@@ -12,8 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
-        <activity android:name=".detail.DetailViewFragment"></activity>
-        <activity android:name=".basket.BasketItemsFragment" />
+        <activity android:name=".registration.UserActivity" />
         <activity android:name=".basket.BasketActivity" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".detail.DetailActivity" />
