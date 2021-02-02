@@ -18,8 +18,6 @@ import kotlin.math.max
 class DetailActivity : BaseActivity() {
     companion object {
         const val DISH_EXTRA = "DISH_EXTRA"
-        const val ITEMS_COUNT = "ITEM"
-        const val USER_PREFERENCES_NAME = "USER_PREFERENCES_NAME"
     }
     lateinit var binding: ActivityDetailBinding
     private var itemCount = 1
@@ -32,11 +30,10 @@ class DetailActivity : BaseActivity() {
         dish?.let{
             setupView(it)
         }
+        val fragment = DetailViewFragment(dish)
+        supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment).commit()
     }
     private fun setupView(dish: Dish){
-        binding.dishTitleView.text = dish.name
-        binding.ingredientTextView.text = dish.ingredients.map { it.name }?.joinToString(", ")
-        binding.viewPager.adapter = PhotoAdapter(this,dish.images)
         refreshShop(dish)
 
         binding.less.setOnClickListener {
@@ -68,11 +65,6 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun refreshMenu(basket: Basket){
-        val itemsCount = basket.items
-        val sharedPreferences = getSharedPreferences(CategoryActivity.USER_PREFERENCE_NAME, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putInt(ITEMS_COUNT, itemCount)
-        editor.apply()
         invalidateOptionsMenu()
     }
 }

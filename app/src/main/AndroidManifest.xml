@@ -12,19 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
-        <activity android:name=".basket.BasketAdapter"></activity>
+        <activity android:name=".detail.DetailViewFragment"></activity>
+        <activity android:name=".basket.BasketItemsFragment" />
         <activity android:name=".basket.BasketActivity" />
         <activity android:name=".BaseActivity" />
-        <activity android:name=".basket.Basket" />
-        <activity android:name=".detail.PhotoAdapter" />
         <activity android:name=".detail.DetailActivity" />
-        <activity android:name=".network.Price" />
-        <activity android:name=".network.ingredient" />
-        <activity android:name=".network.Dish" />
-        <activity android:name=".network.Category" />
-        <activity android:name=".network.MenuResult" />
-        <activity android:name=".network.NetworkConstant" />
-        <activity android:name=".CategoryAdapter" />
         <activity android:name=".category.CategoryActivity" />
         <activity android:name=".HomeActivity">
             <intent-filter>

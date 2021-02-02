@@ -1,30 +1,26 @@
 package fr.isen.MARQUANT.androidrestaurant.basket
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import fr.isen.MARQUANT.androidrestaurant.R
-import fr.isen.MARQUANT.androidrestaurant.databinding.ActivityBasketBinding
 import fr.isen.MARQUANT.androidrestaurant.databinding.BasketCellBinding
 
-/*
+
 interface BasketCellInterface {
     fun onDeleteItem(item: BasketItem)
-    fun onShowDetail(item: BasketItem) // Optional
+    fun onShowDetail(item: BasketItem)
 }
- */
+
 
 class BasketAdapter(private val basket: Basket,
                     private val context: Context,
-        /*private val delegate: BasketCellInterface*/
-                    private val entryClickListener: (BasketItem) -> Unit): RecyclerView.Adapter<BasketAdapter.BasketViewHolder>() {
+                    private val delegate: BasketCellInterface
+                    ): RecyclerView.Adapter<BasketAdapter.BasketViewHolder>() {
 
     class BasketViewHolder(binding: BasketCellBinding): RecyclerView.ViewHolder(binding.root) {
         private val itemTitle: TextView = binding.basketItemTitle
@@ -34,7 +30,7 @@ class BasketAdapter(private val basket: Basket,
         private val deleteButton: ImageView = binding.basketItemDelete
         val layout = binding.root
 
-        fun bind(item: BasketItem, context: Context, entryClickListener: (BasketItem) -> Unit/*, delegate: BasketCellInterface*/) {
+        fun bind(item: BasketItem, context: Context,  delegate: BasketCellInterface) {
             itemTitle.text = item.dish.name
             itemPrice.text = "${item.dish.prices.first().price}€"
             itemQuantity.text = "${context.getString(R.string.quantity)} ${item.count.toString()}"
@@ -43,8 +39,7 @@ class BasketAdapter(private val basket: Basket,
                     .placeholder(R.drawable.zer)
                     .into(itemImageView)
             deleteButton.setOnClickListener {
-                //delegate.onDeleteItem(item)
-                entryClickListener.invoke(item)
+                delegate.onDeleteItem(item)
             }
         }
     }
@@ -55,13 +50,12 @@ class BasketAdapter(private val basket: Basket,
 
     override fun onBindViewHolder(holder: BasketViewHolder, position: Int) {
         val item = basket.items[position]
-        /*
+
         holder.layout.setOnClickListener {
-            // Click sur detail item
             delegate.onShowDetail(item)
         }
-        */
-        holder.bind(item, context, entryClickListener)
+
+        holder.bind(item, context, delegate)
     }
 
     override fun getItemCount(): Int {

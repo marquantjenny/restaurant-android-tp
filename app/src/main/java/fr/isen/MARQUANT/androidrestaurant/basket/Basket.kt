@@ -9,10 +9,14 @@ import java.io.Serializable
 class Basket (val items: MutableList<BasketItem>): Serializable {
 
     var itemsCount: Int=0
-    get(){
-        return items
-            .map { it.count }
-            .reduce { acc, i -> acc+i }
+        get(){
+            return if(items.count() > 0) {
+                items
+                    .map { it.count }
+                    .reduce { acc, i -> acc + i }
+            } else {
+                0
+            }
     }
 
     fun addItem(item: BasketItem){
@@ -29,6 +33,14 @@ class Basket (val items: MutableList<BasketItem>): Serializable {
     fun save(context: Context){
         val jsonFile = File(context.cacheDir.absolutePath + BASKET_FILE)
         jsonFile.writeText(GsonBuilder().create().toJson(this))
+        updateCounter(context)
+    }
+
+    private fun updateCounter(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt(ITEMS_COUNT, itemsCount)
+        editor.apply()
     }
 
     companion object{
@@ -42,6 +54,8 @@ class Basket (val items: MutableList<BasketItem>): Serializable {
             }
         }
         const val BASKET_FILE = "basket.json"
+        const val ITEMS_COUNT = "ITEMS_COUNT"
+        const val USER_PREFERENCES_NAME = "USER_PREFERENCES_NAME"
     }
 }
 class BasketItem(val dish: Dish, var count: Int): Serializable {}
