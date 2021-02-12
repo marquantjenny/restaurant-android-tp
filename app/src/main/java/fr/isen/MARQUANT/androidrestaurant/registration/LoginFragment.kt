@@ -22,6 +22,7 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if(context is UserActivityFragmentInteraction) {
