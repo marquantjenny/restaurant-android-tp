@@ -88,7 +88,11 @@ class UserActivity : AppCompatActivity(), UserActivityFragmentInteraction {
             jsonData,
             { response ->
                 val userResult = GsonBuilder().create().fromJson(response.toString(), RegisterResult::class.java)
-                saveUser(userResult.data)
+                if(userResult.data != null) {
+                    saveUser(userResult.data)
+                } else {
+                    Toast.makeText(this, "Logins incorrect", Toast.LENGTH_LONG).show()
+                }
             },
             { error ->
                 error.message?.let {

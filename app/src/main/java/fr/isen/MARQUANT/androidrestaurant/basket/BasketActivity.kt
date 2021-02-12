@@ -1,13 +1,23 @@
 package fr.isen.MARQUANT.androidrestaurant.basket
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import com.android.volley.Request
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import fr.isen.MARQUANT.androidrestaurant.HomeActivity
 import fr.isen.MARQUANT.androidrestaurant.R
 import fr.isen.MARQUANT.androidrestaurant.databinding.ActivityBasketBinding
 import fr.isen.MARQUANT.androidrestaurant.detail.DetailViewFragment
+import fr.isen.MARQUANT.androidrestaurant.network.NetworkConstant
 import fr.isen.MARQUANT.androidrestaurant.registration.UserActivity
+import org.json.JSONObject
 
 class BasketActivity : AppCompatActivity(), BasketCellInterface {
     lateinit var binding: ActivityBasketBinding
@@ -39,7 +49,7 @@ class BasketActivity : AppCompatActivity(), BasketCellInterface {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == UserActivity.REQUEST_CODE){
+        if (requestCode == UserActivity.REQUEST_CODE && resultCode == Activity.RESULT_FIRST_USER){
             val sharedPreferences = getSharedPreferences(UserActivity.USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
             val idUser = sharedPreferences.getInt(UserActivity.ID_USER, -1)
             if (idUser != -1){
@@ -50,6 +60,39 @@ class BasketActivity : AppCompatActivity(), BasketCellInterface {
 
     private fun sendOrder(idUser: Int) {
         val message = basket.items.map { "${it.count}x ${it.dish.name}" }.joinToString("\n")
-        //basket.clear()
+        val queue = Volley.newRequestQueue(this)
+        val url = NetworkConstant.BASE_URL + NetworkConstant.PATH_ORDER
+
+        val jsonData = JSONObject()
+        jsonData.put(NetworkConstant.ID_SHOP, "1")
+        jsonData.put(NetworkConstant.ID_USER, idUser)
+        jsonData.put(NetworkConstant.MSG, message)
+
+        var request = JsonObjectRequest(
+            Request.Method.POST,
+            url,
+            jsonData,
+            { response ->
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("Votre commande a bien été prise en compte")
+                builder.setPositiveButton("OK") { dialogInterface: DialogInterface, i: Int ->
+                    basket.clear()
+                    basket.save(this)
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                }
+                builder.show()
+            },
+            { error ->
+                error.message?.let {
+                    Log.d("request", it)
+                } ?: run {
+                    Log.d("request", error.toString())
+                    Log.d("request", String(error.networkResponse.data))
+                }
+            }
+        )
+        queue.add(request)
     }
 }
